@@ -200,7 +200,7 @@ if painter_class
     
   }
   
-  class ClockControler
+  class ClockController
     
     def themes= theme
       @window.clock_painter = theme.painter.painter.class.new
@@ -208,7 +208,7 @@ if painter_class
     
   end
   
-  ViewDefinition.bind_controller f, ClockControler.new
+  ViewDefinition.bind_controller f, ClockController.new
   
 else
   $stderr.puts "Cannot find clock painter named '#{ARGV[0]}'"
