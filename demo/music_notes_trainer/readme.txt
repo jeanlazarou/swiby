@@ -6,4 +6,5 @@ Used fonts from:
   http://simplythebest.net/fonts/fonts/musical_symbols.html
 
 
-
+Command (use jruby if you do not use rvm)
+  ruby -I. -I../../core/lib/ -I../chord music_notes_trainer_ui.rb

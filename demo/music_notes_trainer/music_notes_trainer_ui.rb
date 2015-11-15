@@ -52,7 +52,14 @@ class Note
   end
 
   def humanize
-    Note.names[@index]
+    case self
+    when C3
+      "Do3"
+    when C4
+      "Do4"
+    else
+      Note.names[@index]
+    end
   end
   
   def to_s
@@ -108,7 +115,7 @@ panel = frame(:layout => :card, :effect => :slide) {
       section 'Note names'
         radio_group nil, ['A B C', 'La Si Do'], 'La Si Do', :name => :note_names
       section 'Clef'
-        radio_group nil, [G, F, C], G, :name => :clef
+        radio_group nil, [G, F, C3, C4], G, :name => :clef
     }
   }
     

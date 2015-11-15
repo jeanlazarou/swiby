@@ -1,30 +1,30 @@
 require 'tenor_painter'
 
-class TenorDefinition
+class AltoDefinition
 
   def notes_by_position
-    [G, F, E, D, C, B, A, G, F, E, D, C, B]
+    [B, A, G, F, E, D, C, B, A, G, F, E, D]
   end
 
   def draw_clef bg
-    bg.translate 4, 10
+    bg.translate 4, 21
     TenorPainter.paint bg
   end
 
   def low_note? note
-    'B' == note.note
+    'D' == note.note
   end
 
   def high_note? note
-    'G' == note.note
+    'B' == note.note
   end
 
   def name
-    C4
+    C3
   end
   
   def offset_from_trebble
-    1
+    -1
   end
   
 end

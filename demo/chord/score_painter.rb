@@ -14,9 +14,17 @@ require 'chord_translator'
 require 'flat_painter'
 require 'sharp_painter'
 
+require 'alto_definition'
 require 'bass_definition'
 require 'tenor_definition'
 require 'trebble_definition'
+
+# some special constants...
+C3 = Note.new('C')
+C4 = Note.new('C')
+
+def C3.to_s; "C3"; end
+def C4.to_s; "C4"; end
 
 class ScorePainter
   
@@ -48,8 +56,9 @@ class ScorePainter
   
     @supported_clefs = {
       F => BassDefinition.new,
-      C => TenorDefinition.new,
       G => TrebbleDefinition.new,
+      C4 => TenorDefinition.new,
+      C3 => AltoDefinition.new,
     }
     
     @supported_clefs.default = @supported_clefs[G]
