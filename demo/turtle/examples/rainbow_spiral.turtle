@@ -1,0 +1,10 @@
+
+repeat(100) {|j|
+
+  color wheel(j * 3.0)
+
+  forward 10 + j * 6
+
+  right 91
+  
+}

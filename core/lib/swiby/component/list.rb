@@ -21,9 +21,13 @@ module Swiby
     end
 
     def list label = nil, values = nil, selected = nil, options = nil, &block
-      list_factory(label, values, selected, options, block, :layout_list) do |opt|
+
+      options = ListOptions.new(context, label, values, selected, options, &block)
+      
+      list_factory(options, :layout_list) do |opt|
         ListBox.new(opt)
       end
+      
     end
     
   end

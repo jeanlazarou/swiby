@@ -160,7 +160,8 @@ if $0 == __FILE__
     
     use_styles styles
     
-    autosize
+    width 600
+    height 600
         
     swing { |f|
       f.resizable = false
@@ -178,17 +179,17 @@ if $0 == __FILE__
           at [0, 0]
             button "Resolve", :resolve
             
-          at [60, 40], relative_to(:resolve, :align, :below)
+          at [60, 20], relative_to(:resolve, :align, :below)
             button "New", :new_game
             
-          at [50, 20], relative_to(:new_game, :right, :below)
+          at [10, 0], relative_to(:new_game, :right, :below)
             button "Again", :restart
           
-          at [60, 0], relative_to(:restart, :right, :align)
+          at [20, 20], relative_to(:restart, :right, :align)
             button "Exit!", :exit
             
-          at [100, 0], relative_to(:resolve, :right, :below)
-            radio_group(:horizontal, nil, ["Easy", "Medium", "Advanced"], "Easy", :name => :level)
+#          at [100, 0], relative_to(:resolve, :right, :below)
+#            radio_group(:horizontal, nil, ["Easy", "Medium", "Advanced"], "Easy", :name => :level)
             
           at [0, 110], relative_to(:resolve, :align, :below)
             hover_button 'french', :name => :switch_language
@@ -220,8 +221,6 @@ if $0 == __FILE__
     
       @words.content = Array.new(@game.words)
       
-      auto_size
-      
     end
     
     def level= level
@@ -244,19 +243,6 @@ if $0 == __FILE__
         
     def words= word
       @board.hint_for word if word and @hint_enabled
-    end
-    
-    def auto_size
-      
-      if @words.item_count == 0
-        @words.java_component.preferred_size = @list_preferred_size if @list_preferred_size
-      else
-        @list_preferred_size = @words.java_component(true).preferred_size
-        @words.java_component.preferred_size = @list_preferred_size
-      end
-      
-      java_component.pack
-      
     end
     
   }

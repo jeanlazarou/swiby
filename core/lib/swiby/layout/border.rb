@@ -13,6 +13,8 @@ require 'swiby/layout_factory'
 
 module Swiby
 
+  # BorderLayout maps to java's one but adds a ratio option
+  # where ratio is (width / height)
   class BorderLayoutFactory
   
     def accept name
@@ -21,10 +23,12 @@ module Swiby
     
     def create name, data
           
-      layout = BorderLayout.new
+      layout = SwibyBorderLayout.new
 
       layout.hgap = data[:hgap] if data[:hgap]
       layout.vgap = data[:vgap] if data[:vgap]
+      
+      layout.ratio = data[:ratio] if data[:ratio]
           
       def layout.add_layout_extensions component
 
@@ -73,5 +77,38 @@ module Swiby
   end
   
   LayoutFactory.register_factory(BorderLayoutFactory.new)
+  
+  class SwibyBorderLayout < BorderLayout
+   
+    attr_accessor :ratio
+    
+    def layoutContainer(parent)
+      
+      super
+      
+      if @ratio
+        
+        center = getLayoutComponent(BorderLayout::CENTER)
+        
+        rect = center.bounds
+        
+        width = rect.height * ratio
+        height = rect.width / ratio
+        
+        if height > rect.height
+          rect.x += (rect.width - width) / 2
+          height = rect.height
+        elsif width > rect.width
+          rect.y += (rect.height - height) / 2
+          width = rect.width
+        end
+        
+        center.setBounds(rect.x, rect.y, width, height)
+        
+      end
+    
+    end
+    
+  end
   
 end

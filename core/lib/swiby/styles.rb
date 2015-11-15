@@ -7,8 +7,6 @@
 #
 #++
 
-require 'irb/frame'
-
 module Swiby
 
   class Styles
@@ -258,11 +256,15 @@ module Swiby
       path = resolve_local_file(file) unless path
       
       unless path        
-          
-        b = IRB::Frame.top(1)
         
-        dir = File.dirname(eval("__FILE__", b))
-        path = File.expand_path(file, dir)
+        if caller[1] =~ /^(.*):/
+        
+          caller_file = $1
+          
+          dir = File.dirname(caller_file)
+          path = File.expand_path(file, dir)
+
+        end
         
       end
 

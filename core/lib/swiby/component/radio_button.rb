@@ -32,29 +32,10 @@ module Swiby
     
     def radio_group label = nil, values = nil, selected = nil, dir = nil, options = nil, &block
       
-      args = [label, values, selected, dir, options, block, :layout_list]
-            
-      i = args.index(:horizontal)
+      options = ListOptions.new(context, label, values, selected, dir, options, &block)
       
-      if i
-        direction = :horizontal
-        args.delete_at(i)
-      end
-      
-      i = args.index(:vertical)
-      
-      if i
-        direction = :vertical
-        args.delete_at(i)
-      end
-      
-      unless direction
-        direction = :vertical
-        args.delete_at(args.length - 3)
-      end
-      
-      list_factory(*args) do |opt|
-        RadioGroup.new(direction, opt)
+      list_factory(options, :layout_list) do |opt|
+        RadioGroup.new(RadioButton, opt)
       end
       
     end
@@ -71,22 +52,28 @@ module Swiby
   
   class RadioGroup < ComboBox
     
-    def initialize dir = :vertical, options = nil
+    def initialize component_class, options = {}
+      
+      @component_class = component_class
       
       @listeners = []
       @radio_items = []
 
       @panel = Panel.new
       
-      if dir == :vertical
+      if options[:direction] == :vertical
         layout = {:layout => :stacked, :align => :left}
-      elsif dir == :horizontal
+      elsif options[:direction] == :horizontal
         layout = {:layout => :stacked, :align => :left, :direction => :horizontal}
       else
-        options = dir
+        layout = nil
       end
 
-      @panel.content(layout) {}
+      if layout
+        @panel.content(layout) {}
+      else
+        @panel.content() {}
+      end
       
       @selected_index = 0
       
@@ -128,7 +115,7 @@ module Swiby
       
       @group = ButtonGroup.new unless @group
       
-      radio = RadioButton.new(ButtonOptions.new(nil, value.to_s))
+      radio = @component_class.new(ButtonOptions.new(nil, to_human_readable(value, :short), true))
       
       index = @radio_items.length
       

@@ -12,6 +12,7 @@ require 'swiby'
 require 'swiby/layout/table'
 
 require 'swiby/mvc/frame'
+require 'swiby/mvc/label'
 require 'swiby/mvc/list'
 require 'swiby/mvc/form'
 require 'swiby/mvc/check'
@@ -46,8 +47,8 @@ Dir.open(dir).each do |file|
 
   next if file == 'manual_test.rb'
   next unless file =~ /[.]rb$/ and file != this_file
-  
-  if limit_to.size > 0
+
+  unless limit_to.empty?
     next unless limit_to.include?(file)
   end
   

@@ -1,3 +1,4 @@
+#encoding: utf-8
 #--
 # Copyright (C) Swiby Committers. All rights reserved.
 # 
@@ -17,7 +18,7 @@ class WordDistributor
  
     @words.clear
     
-    File.readlines(file).each do |line|
+    File.readlines(file, :encoding => 'UTF-8').each do |line|
       line = line.chomp
       line.tr! 'באגהיטךכםלמןףעפצתשûüח', 'aaaaeeeeiiiioooouuuuc'
       @words << line if line.length > 2

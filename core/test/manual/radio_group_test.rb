@@ -80,18 +80,18 @@ class RadioGroupTest < ManualTest
     
   end
 
-  manual 'Radio Group / horizontal / no data' do
+  manual 'Radio Group / vertical / no data' do
     
     form {
       
-      title "Radio Group / horizontal / no data"
+      title "Radio Group / vertical / no data"
       
       width 340
       height 200
       
       label 'blue should be selected'
 
-      radio_group :horizontal, 'Color:', ['red', 'green', 'blue'], 'blue', :name => :color
+      radio_group 'Color:', ['red', 'green', 'blue'], 'blue', :name => :color, :direction => :vertical
       
       button "'green' by index" do
         context[:color].selection = 1
@@ -116,13 +116,42 @@ class RadioGroupTest < ManualTest
       width 340
       height 200
       
-      radio_group(:horizontal, 'Color:', ['red', 'green', 'blue'], 'blue') { |color|
+      radio_group('Color:', ['red', 'green', 'blue'], 'blue') { |color|
         message_box "Selected color is '#{color}'"
       }
       
       visible true
       
     }
+
+  end
+
+  class ColorTermsHumanizer
+  
+    MAP_SHORT = {:red => 'R', :blue => 'B', :green => 'G'}
+    
+    def humanize value, size
+      MAP_SHORT[value] if size == :short
+    end
+    
+  end
+  
+  manual 'Radio Group test humanized values' do
+    
+    CONTEXT.humanizer = ColorTermsHumanizer.new
+    
+    form {
+      
+      width 340
+      height 200
+      
+      radio_group('Color:', [:red, :green, :blue], :blue)
+      
+      visible true
+    
+    }
+
+    CONTEXT.humanizer = nil
 
   end
   

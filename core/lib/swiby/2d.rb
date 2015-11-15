@@ -197,9 +197,9 @@ class DrawPen
     @gr.centered_string text, @x, @y
   end
   
-  def box w, h, text = nil
+  def box w, h, text = nil, stroke = true
   
-    @gr.draw_rect @x, @y, w, h
+    @gr.draw_rect @x, @y, w, h if stroke
   
     if text
   
@@ -230,6 +230,12 @@ class Graphics
     @parent = parent
     @pending_off_image = nil
     @resize_always = resize_always
+    @keep_aspect_ratio = true
+    @save_stack = []
+  end
+  
+  def keep_aspect_ratio= flag
+    @keep_aspect_ratio = flag
   end
  
   def self.create_font name, style = Font::PLAIN, size = 10
@@ -319,6 +325,7 @@ class Graphics
       if force_paint
        
         off_gr.drawImage(@pending_off_image, 0, 0, @comp) if @pending_off_image
+        
         @pending_off_image = nil
        
         dw = self.drawing_width
@@ -327,10 +334,10 @@ class Graphics
         if dw and dh
           
           unless graphics.width == dw and graphics.height == dh
+    
+            scale_x = graphics.width / dw.to_f
+            scale_y = graphics.height / dh.to_f
             
-            scale_x = graphics.width / self.drawing_width.to_f
-            scale_y = graphics.height / self.drawing_height.to_f
-
             graphics.scale scale_x, scale_y
             
           end
@@ -407,9 +414,9 @@ class Graphics
     
     unless w
       w = drawing_width 
-    w = width unless w
+      w = width unless w
       h = drawing_height 
-    h = height unless h
+      h = height unless h
     end
     
     @gr.clear_rect 0, 0, w, h
@@ -506,7 +513,7 @@ class Graphics
   end
   
   def translate x, y
-    @gr.translate(x, y)
+    @gr.java_send :translate, [Java::int, Java::int], x, y
   end
   
   def rotate angle, x = nil, y = nil
@@ -525,6 +532,24 @@ class Graphics
     @gr.scale scale_x, scale_y
   end
   
+  # matrix is an array of 6 floating point values representing the 6 
+  # specifiable entries of the 3x3 transformation matrix
+  def transform matrix
+    
+    transformation = java.awt.geom.AffineTransform.new(*matrix)
+    
+    @gr.transform transformation
+    
+  end
+
+  def save_transform
+    @save_stack << @gr.get_transform
+  end
+  
+  def restore_transform
+    @gr.set_transform @save_stack.pop unless @save_stack.empty?    
+  end
+  
   def polygon *points
     
     poly = java.awt.Polygon.new
@@ -533,6 +558,10 @@ class Graphics
     
     poly
     
+  end
+  
+  def draw_3D_rect x, y, w, h, raised
+    @gr.draw3DRect x, y, w, h, raised
   end
   
   def draw_rect x, y, w, h
@@ -561,6 +590,14 @@ class Graphics
   
   def fill_polygon poly
     @gr.fill_polygon poly
+  end
+  
+  def draw_path path
+    @gr.draw path
+  end
+  
+  def fill_path path
+    @gr.fill path
   end
   
   def draw_oval x, y, width, height

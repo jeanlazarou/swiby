@@ -1,4 +1,4 @@
-
+#encoding: ISO-8859-1
 #
 # This application translates chord symbols to the notes they comprise
 #
@@ -84,7 +84,7 @@ class Note
     
     @note = $1
     @pitch = $2
-    @index = $1[0] - "A"[0]
+    @index = $1.ord - "A".ord
     
   end
   
@@ -194,7 +194,7 @@ class Note
   
   def self.to_note name, pitch = nil
     
-    i = name[0] - "A"[0]
+    i = name.ord - "A".ord
     
     if pitch == '#'
       SHARPS[i]
@@ -269,7 +269,7 @@ class Chord
   
   def initialize chord_symbol
     
-    raise ArgumentError.new("Chord symbol cannot be nil") unless @buffer.nil?
+    raise ArgumentError.new("Chord symbol cannot be nil") unless chord_symbol
     
     chord_symbol = chord_symbol.to_s
     

@@ -16,7 +16,7 @@ class Turtle
   
   SHORTCUTS.merge!({:ne => :netoyerecran, :mt => :montrertortue, :ct => :cachertortue, :at => :avant, :ae => :arriere, :de => :droite, :ge => :gauche})
   
-  alias :en_name_for_to? :name_for_to?
+  alias en_name_for_to? name_for_to?
   
   def name_for_to? symbol
     symbol == :pour || en_name_for_to?(symbol)
@@ -59,7 +59,15 @@ class Turtle
   end
   
   def repeter n
-    n.times {yield}
+    n.times {|i| yield(i)}
+  end
+  
+  def couleur *value
+    color *value
+  end
+  
+  def roue *value
+    wheel *value
   end
   
 end

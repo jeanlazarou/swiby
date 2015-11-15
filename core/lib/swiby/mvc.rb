@@ -493,7 +493,13 @@ CODE
       
       master.refresh
       
-      window.visible = true
+      async_swing_thread do
+        
+        controller.ready if controller.respond_to?(:ready)
+        
+        window_wrapper.visible = true
+        
+      end
       
       window_wrapper
       

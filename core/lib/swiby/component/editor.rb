@@ -51,6 +51,8 @@ module Swiby
       context << pane
       layout_list label, pane if label
       layout_panel pane unless label
+      
+      pane
 
     end
 

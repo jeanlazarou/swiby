@@ -21,6 +21,10 @@ module Swiby
       @valid_props = [:more_options]
     end
 
+    def to_hash
+      @options
+    end
+    
     def context()
       @context
     end
@@ -150,7 +154,8 @@ module Swiby
       register_definition(work)
     
     end
-    
+
+    #TODO shouldn't optional default to true?
     def declare name, types, optional = false
       
       optional = optional == true

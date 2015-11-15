@@ -16,15 +16,15 @@ require 'java'
 module Swiby
 
   module AWT
-    include_class 'java.awt.EventQueue'
-    include_class 'java.awt.FlowLayout'
+    java_import 'java.awt.EventQueue'
+    java_import 'java.awt.FlowLayout'
   end
   
   module JAVA
-    include_class 'java.lang.Runnable'
+    java_import 'java.lang.Runnable'
   end
   
-  include_class 'javax.swing.JScrollPane'
+  java_import 'javax.swing.JScrollPane'
 
   def message_box text
     JOptionPane.showMessageDialog nil, text
@@ -55,12 +55,15 @@ module Swiby
 
   end
 
-  def to_human_readable(value)
+  # @param size the size to the readable text :short, :normal or :long
+  def to_human_readable(value, size = :long)
     
     if value.respond_to? :humanize
       value.humanize
     elsif value.respond_to? :name
       value.name
+    elsif CONTEXT.humanize?
+      CONTEXT.to_human_readable(value, size)
     else
       value.to_s
     end

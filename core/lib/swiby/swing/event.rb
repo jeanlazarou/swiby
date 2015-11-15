@@ -12,29 +12,29 @@ require 'java'
 module Swiby
 
   module Swing
-    include_class 'javax.swing.event.DocumentListener'
-    include_class 'javax.swing.event.HyperlinkEvent'
-    include_class 'javax.swing.event.HyperlinkListener'
-    include_class 'javax.swing.event.ListSelectionListener'
-    include_class 'javax.swing.event.TreeSelectionListener'
+    java_import 'javax.swing.event.DocumentListener'
+    java_import 'javax.swing.event.HyperlinkEvent'
+    java_import 'javax.swing.event.HyperlinkListener'
+    java_import 'javax.swing.event.ListSelectionListener'
+    java_import 'javax.swing.event.TreeSelectionListener'
   end
 
   module AWT
-    include_class 'java.awt.Toolkit'
-    include_class 'java.awt.AWTEvent'
-    include_class 'java.awt.event.KeyEvent'
-    include_class 'java.awt.event.KeyAdapter'
-    include_class 'java.awt.event.MouseAdapter'
-    include_class 'java.awt.event.MouseMotionAdapter'
-    include_class 'java.awt.event.FocusAdapter'
-    include_class 'java.awt.event.WindowAdapter'
-    include_class 'java.awt.event.ActionListener'
-    include_class 'java.awt.event.AWTEventListener'
-    include_class 'java.awt.event.HierarchyBoundsListener'
+    java_import 'java.awt.Toolkit'
+    java_import 'java.awt.AWTEvent'
+    java_import 'java.awt.event.KeyEvent'
+    java_import 'java.awt.event.KeyAdapter'
+    java_import 'java.awt.event.MouseAdapter'
+    java_import 'java.awt.event.MouseMotionAdapter'
+    java_import 'java.awt.event.FocusAdapter'
+    java_import 'java.awt.event.WindowAdapter'
+    java_import 'java.awt.event.ActionListener'
+    java_import 'java.awt.event.AWTEventListener'
+    java_import 'java.awt.event.HierarchyBoundsListener'
   end
 
   module Java
-    include_class 'java.beans.PropertyChangeListener'
+    java_import 'java.beans.PropertyChangeListener'
   end
 
   class FocusLostListener < AWT::FocusAdapter

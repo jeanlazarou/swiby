@@ -395,7 +395,33 @@ module Swiby
       end
       
     end
+
+    #TODO maybe in a separte module? (for a separate GEM)
+    def humanizer= humanizer
+      @humanizer = humanizer
+    end
+    
+    def humanize?
+      !@humanizer.nil?
+    end
+    
+    # @param size the size to the readable text :short, :normal or :long
+    def to_human_readable value, size = :long
       
+      if @humanizer
+        
+        text = @humanizer.humanize(value, size)
+        
+        raise "Invalid #{size} humanization of '#{value.inspect}' by #{@humanizer.class} instance: #{@humanizer}" unless text
+        
+        text
+        
+      else
+        value
+      end
+      
+    end
+    
   end
 
   SWIBY_VERSION = '1.0'

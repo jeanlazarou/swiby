@@ -20,17 +20,21 @@ module Swiby
     end
     
     def combo label = nil, values = nil, selected = nil, options = nil, &block
-      list_factory(label, values, selected, options, block, :layout_input) do |opt|
+    
+      options = ListOptions.new(context, label, values, selected, options, &block)
+      
+      list_factory(options, :layout_input) do |opt|
         ComboBox.new(opt)
       end
+      
     end
 
     # Needs a block that returns the Swiby wrapper
-    def list_factory label, values, selected, options, block, layout_method
+    def list_factory list_options, layout_method
 
       ensure_section
 
-      x = ListOptions.new(context, label, values, selected, options, &block)
+      x = list_options
       
       accessor = nil
       
@@ -49,7 +53,6 @@ module Swiby
       else
         x[:selected] = selected
       end
-      
 
       comp = yield(x)
 
@@ -104,11 +107,17 @@ module Swiby
       declare :action, [Proc], true
       declare :enabled, [TrueClass, FalseClass, IncrementalValue], true
       declare :input_component, [Object], true
+      declare :text_size, [Symbol], true #TODO improve option? Here only :short, :normal and :long are valid
       declare :style_class, [String, Symbol], true
       
+      declare :direction, [Symbol], true #TODO improve option? Here only :vertical and :horizontal are valid
+
       overload :values
+      overload :values, :selected
+      
       overload :label, :values
       overload :label, :values, :selected
+      overload :label, :values, :selected, :direction
       
     end
 
@@ -329,7 +338,7 @@ module Swiby
   
   module Swing
     
-    include_class 'javax.swing.plaf.basic.BasicComboBoxRenderer'
+    java_import 'javax.swing.plaf.basic.BasicComboBoxRenderer'
     
     class SwibyComboBoxRender < BasicComboBoxRenderer
     

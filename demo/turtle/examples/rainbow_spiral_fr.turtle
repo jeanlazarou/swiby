@@ -1,0 +1,10 @@
+
+repeter(100) {|j|
+
+  couleur roue(j * 3.0)
+
+  avant 10 + j * 6
+
+  droite 91
+  
+}

@@ -9,11 +9,20 @@
 
 require 'swiby/2d'
 
+require 'chord_translator'
+
+require 'flat_painter'
+require 'sharp_painter'
+
+require 'bass_definition'
+require 'tenor_definition'
+require 'trebble_definition'
+
 class ScorePainter
   
   LINE_5 = 70
-  
-  NOTES_Y = [
+
+  G_NOTES_Y = [
      LINE_5 + 3 * 30 - 27, # A
      LINE_5 + 2 * 30 - 12, # B
      LINE_5 + 5 * 30 - 12, # C
@@ -22,7 +31,7 @@ class ScorePainter
      LINE_5 + 3 * 30 + 3,  # F
      LINE_5 + 3 * 30 - 12, # G
   ]
-  UPPER_NOTES_Y = [
+  G_UPPER_NOTES_Y = [
      LINE_5 - 1 * 30 - 12, # A
      LINE_5 + 2 * 30 - 12, # B
      LINE_5 + 1 * 30 + 3,  # C
@@ -32,13 +41,37 @@ class ScorePainter
      LINE_5 - 1 * 30 + 3,  # G
   ]
   
-  FLAT_CODE = 67
-  SHARP_CODE = 6
-  G_CLEF_CODE = 9
-
+  NOTE_HEIGHT = 24
+  SPACE_HEIGHT = 30
+  
   def initialize
-    @musical_font = Graphics.create_font("MusicalSymbols", Font::PLAIN, 120)
-    @musical_font_small = Graphics.create_font("MusicalSymbols", Font::PLAIN, 80)
+  
+    @supported_clefs = {
+      F => BassDefinition.new,
+      C => TenorDefinition.new,
+      G => TrebbleDefinition.new,
+    }
+    
+    @supported_clefs.default = @supported_clefs[G]
+    
+    self.clef = G
+    
+  end
+  
+  # Valid values for +clef+ are: 
+  #  bass    => F3
+  #  trebble => G4
+  #  tenor   => C4
+  # But any F would be bass clef, any G would be trebble, etc.
+  def clef= clef
+  
+    @clef_definition = @supported_clefs[clef]
+    
+    @notes_by_position = @clef_definition.notes_by_position
+      
+    @notes_y = G_NOTES_Y.rotate(@clef_definition.offset_from_trebble)
+    @upper_notes_y = G_UPPER_NOTES_Y.rotate(@clef_definition.offset_from_trebble)
+
   end
   
   def paint_background bg
@@ -50,7 +83,7 @@ class ScorePainter
     
     bg.stroke_width 1
     bg.color Color::GRAY
-    bg.draw_rect 0, 0, bg.width, bg.height
+    bg.draw_rect 0, 0, bg.width - 1, bg.height - 1
     
     # draw staff
     bg.stroke_width 2
@@ -64,9 +97,43 @@ class ScorePainter
       
     end
     
-    # draw treble clef
-    bg.set_font @musical_font
-    bg.draw_glyph G_CLEF_CODE, 10, NOTES_Y[3]
+    # draw clef
+    bg.scale 2.8
+
+    @clef_definition.draw_clef bg
+    
+  end
+  
+  def paint_note g, x, note, lower
+    
+    g.antialias = true
+    
+    i = note.index
+  
+    y = lower ? @notes_y[i] : @upper_notes_y[i]
+  
+    draw_note g, x, y, note, lower
+    
+  end
+  
+  def paint_note_at g, x, y, color
+    
+    y -= SPACE_HEIGHT / 2
+    
+    if y < LINE_5 - 1.5 * SPACE_HEIGHT
+      y = LINE_5 - 1.5 * SPACE_HEIGHT
+    elsif y > SPACE_HEIGHT / 2 + LINE_5 + 4 * 30
+      y = SPACE_HEIGHT / 2 + LINE_5 + 4 * 30
+    end
+    
+    note, lower = find_note(y)
+    
+    g.color color
+    g.antialias = true
+    
+    draw_note g, x, y, note, lower
+    
+    note
     
   end
   
@@ -82,15 +149,10 @@ class ScorePainter
       
       i = note.index
       
-      lower, y = true, NOTES_Y[i]
-      lower, y = false, UPPER_NOTES_Y[i] if y > previous_y
+      lower, y = true, @notes_y[i]
+      lower, y = false, @upper_notes_y[i] if y > previous_y
     
-      g.fill_oval x, y, 40, 24
-      
-      if (lower and 'C' == note.note) or (!lower and 'A' == note.note) 
-        g.stroke_width 2
-        g.draw_line x - 11, y + 10, x + 40 + 10, y + 11
-      end
+      draw_note g, x, y, note, lower
       
       if note.pitch == '#'
         draw_sharp g, x, y
@@ -107,21 +169,53 @@ class ScorePainter
     
   def draw_sharp g, x, y
     
-    x -= 20
-    y += 13
-    
-    g.set_font @musical_font_small
-    g.draw_glyph SHARP_CODE, x, y
+    g.save_transform
+    g.translate x - 26, y - 9
+    g.scale 1.4
+    SharpPainter.paint g
+    g.restore_transform
     
   end
   
   def draw_flat g, x, y
     
-    x -= 20
-    y += 13
+    g.save_transform
+    g.translate x - 30, y - 18
+    g.scale 1.6
+    FlatPainter.paint g
+    g.restore_transform
     
-    g.set_font @musical_font_small
-    g.draw_glyph FLAT_CODE, x, y
+  end
+
+  def draw_note g, x, y, note, lower
+      
+    g.fill_oval x, y, 40, NOTE_HEIGHT
+
+    if lower && @clef_definition.low_note?(note) ||
+       !lower && @clef_definition.high_note?(note)
+      
+      g.stroke_width 2
+      g.draw_line x - 11, y + 10, x + 40 + 10, y + 11
+    
+    end
+      
+  end
+
+  def find_note y
+    
+    if y < LINE_5 - SPACE_HEIGHT
+      index = 0
+    elsif y > LINE_5 + 4 * 30 + SPACE_HEIGHT
+      index = @notes_by_position.length - 1
+    else
+      index = ((y - LINE_5) / (30 / 2)) + 3
+    end
+    
+    lower = index > 5
+    
+    note = @notes_by_position[index]
+
+    return note, lower
     
   end
   

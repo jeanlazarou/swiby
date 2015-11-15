@@ -16,3 +16,20 @@ Notes:
    | arrow_refresh    | reload          |
    | arrow_left       | go-previous     |
    | arrow_right      | go-next         |
+
+
+Tests
+
+Swiby has two type of tests, usual automated test and manual tests.
+
+To run the manual tests, from the Swiby directory:
+  jruby -Ilib test/manual/test_all.rb
+
+To run one of the manual test:
+  jruby -Ilib test/manual/test_all.rb toggle_test 
+or
+  jruby -Ilib test/manual/test_all.rb toggle_test.rb
+
+To run several manual tests:
+  jruby -Ilib test/manual/test_all.rb check_test toggle_test
+

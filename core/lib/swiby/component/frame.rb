@@ -280,37 +280,39 @@ module Swiby
         @@frames.delete self
       end
           
-      if flag
-          
-        preferred = @default_layer.preferred_size
-        
-        if @width and @width > 0
-          preferred.width = @width
-        end
-        
-        if @height and @height > 0
-          preferred.height = @height
-        end
-        
-        insets = @component.insets
-        preferred.width += insets.left + insets.right
-        preferred.height += insets.top + insets.bottom
-        
-        @component.set_minimum_size(preferred)
-        
-        if @autosize_enabled or (@autosize_enabled.nil? and Defaults.auto_sizing_frame)
-          
-          @component.set_preferred_size preferred
-          @component.pack
-        
-        end
-      
-      end
-   
+      pack_content if flag
+
       glass_pane.start if glass_pane.respond_to?(:start)
       
     end
 
+    def pack_content
+          
+      preferred = @default_layer.preferred_size
+      
+      if @width and @width > 0
+        preferred.width = @width
+      end
+      
+      if @height and @height > 0
+        preferred.height = @height
+      end
+      
+      insets = @component.insets
+      preferred.width += insets.left + insets.right
+      preferred.height += insets.top + insets.bottom
+      
+      @component.set_minimum_size(preferred)
+      
+      if @autosize_enabled or (@autosize_enabled.nil? and Defaults.auto_sizing_frame)
+        
+        @component.set_preferred_size preferred
+        @component.pack
+      
+      end
+      
+    end
+    
     def close
       
       @@frames.delete self

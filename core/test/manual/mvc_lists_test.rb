@@ -12,6 +12,7 @@ require 'swiby/mvc/frame'
 require 'swiby/mvc/list'
 require 'swiby/mvc/table'
 require 'swiby/mvc/button'
+require 'swiby/mvc/toggle'
 require 'swiby/mvc/radio_button'
 
 #--
@@ -116,11 +117,37 @@ class MVCTablesTest < ManualTest
   
 end
 
+class MVCToggleGroupsTest < ManualTest
+  
+  manual 'Groups with controller' do
+
+    controller = Object.new
+    
+    lists_add_handlers controller
+        
+    ViewDefinition.bind_controller lists_create_view(:toggle_group), controller
+    
+  end
+
+  manual 'Groups with view only' do
+
+    view = lists_create_view(:toggle_group)
+    
+    lists_add_handlers view
+
+    ViewDefinition.bind_controller view
+    
+  end
+  
+end
+
 def lists_create_view list_type
   
   title_text = case list_type
     when :radio_group
       'Radio groups'
+    when :toggle_group
+      'Toggle groups'
     when :list
       'Lists'
     when :table
@@ -135,6 +162,10 @@ def lists_create_view list_type
     when :radio_group
       def list_directive *args
         radio_group *args
+      end
+    when :toggle_group
+      def list_directive *args
+        toggle_group *args
       end
     when :list
       def list_directive *args

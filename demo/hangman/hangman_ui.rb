@@ -240,7 +240,14 @@ end
 distributor = WordDistributor.new
 
 if ARGV[0]
-  distributor.load ARGV[0]
+  words_file =  File.expand_path(ARGV[0])
+  
+  unless File.exist?(words_file)
+    $stderr.puts "Words file not found #{words_file}"
+    exit
+  end
+
+  distributor.load words_file
 else
   distributor.load '../word_puzzle/words_en.txt'
 end

@@ -140,7 +140,7 @@ class ID3Metadata
     end
     
     def self.convert_tag_size x # strange_string_size
-      (x[3] & 0x7F) + ((x[2] & 0x7F) << 7) + ((x[1] & 0x7F) << 14) + ((x[0] & 0x7F) << 21)
+      (x[3].ord & 0x7F) + ((x[2].ord & 0x7F) << 7) + ((x[1].ord & 0x7F) << 14) + ((x[0].ord & 0x7F) << 21)
     end
     
     def self.metadata frames

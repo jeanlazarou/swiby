@@ -9,6 +9,8 @@
 
 import java.awt.Color
 
+require 'color_wheel'
+
 class Turtle
   
   THEMES = {
@@ -20,6 +22,7 @@ class Turtle
   
   def initialize
     @theme = :red
+    @color_wheel = ColorWheel.new
   end
   
   def script= script
@@ -51,7 +54,7 @@ class Turtle
         
         gr.antialias = true
         
-        gr.color THEMES[@theme][1]
+        gr.color @draw_color ? @draw_color : THEMES[@theme][1]
         gr.background THEMES[@theme][0]
         gr.clear
         
@@ -121,7 +124,7 @@ class Turtle
   end
   
   def repeat n
-    n.times {yield}
+    n.times {|i| yield(i)}
   end
   
   def angle= radians
@@ -133,7 +136,7 @@ class Turtle
   def name_for_to? symbol
     symbol == :to
   end
-  
+
   def method_missing sym, *args, &block
     
     if SHORTCUTS.key?(sym)
@@ -154,9 +157,17 @@ class Turtle
     
   end
   
+  def color value
+    @pen.color Color.new(*value)
+  end
+  
+  def wheel value
+    @color_wheel.change_hue(value)
+  end
+  
   def theme name = nil
 
-    name = name.name if name.is_a?(Procedure)
+    name = name.name if name.respond_to?(:name)
 
     return if name.nil? or @theme == name
     return unless THEMES.key?(name)

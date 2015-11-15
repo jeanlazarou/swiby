@@ -14,9 +14,9 @@ require 'swiby/component/editor'
 require 'swiby/swing/event'
 require 'swiby/util/ruby_tokenizer'
 
-include_class 'javax.swing.JLayeredPane'
-include_class 'javax.swing.text.StyleConstants'
-include_class 'javax.swing.text.StyledEditorKit'
+java_import 'javax.swing.JLayeredPane'
+java_import 'javax.swing.text.StyleConstants'
+java_import 'javax.swing.text.StyledEditorKit'
 
 class ScriptBuffer
   

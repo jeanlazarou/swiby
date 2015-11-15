@@ -49,8 +49,28 @@ class DrawPanel < javax.swing.JComponent
     
   end
   
+  class MissingLayer
+  
+    def initialize name
+      @name = name
+    end
+    
+    def method_missing sym, *args
+    end
+    
+  end
+  
   def layer name
-    @graphics[name] if @graphics
+
+    layer = nil    
+    layer = @graphics[name] if @graphics
+    
+    if layer
+      layer
+    else
+      MissingLayer.new(name)
+    end
+    
   end
     
   def paintComponent g
@@ -228,9 +248,15 @@ module Swiby
 
       if x[:actual_class]
 
-        panel = x[:actual_class].new
+        constructor_arity = x[:actual_class].instance_method(:initialize).arity
+        
+        if constructor_arity == 0
+          panel = x[:actual_class].new
+        else
+          raise "'initialize' method of actual class '#{x[:actual_class]}' should have no arguments"
+        end
 
-        raise "Given class '#{x[:actual_class]}' is not a DrawPanel" unless panel.is_a?(DrawPanel)
+        raise "Actual class '#{x[:actual_class]}' is not a DrawPanel" unless panel.is_a?(DrawPanel)
 
       else
         panel = DrawPanel.new
@@ -238,7 +264,7 @@ module Swiby
 
       panel.preferred_size = Dimension.new(x[:width], x[:height]) if x[:width] and x[:height]
       
-      panel.on_paint &x[:action] if x[:action]
+      panel.on_paint &x[:action] if x[:action] #TODO should be action! bad name...
       panel.resize_always = x[:resize_always] if x[:resize_always]
       
       panel.name = x[:name].to_s if x[:name]

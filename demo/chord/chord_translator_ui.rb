@@ -55,7 +55,7 @@ panel = frame(:layout => :form, :vgap => 10, :hagp => 10) {
       
       begin
         chord = Chord.new(@chord_symbol)
-      rescue
+      rescue => e
         @current_chord = nil
         bg_color = value.length == 0 ? Color::WHITE : Color::RED
       else
@@ -69,7 +69,7 @@ panel = frame(:layout => :form, :vgap => 10, :hagp => 10) {
       
       @symbol.apply_styles @styles
       @score.layer(:notes).repaint
-        
+      
     end
     
   end
