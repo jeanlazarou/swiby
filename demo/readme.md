@@ -10,20 +10,10 @@ It also gives the command lines to run them.
 
 The demos are available from the trunk in Swiby's repository.
 
-Check out the Swiby core from Codehaus:
-
-
-```
-svn co http://svn.codehaus.org/swiby/trunk/core
+Check out the Swiby core from here
 
 ```
-
-Chekout the demo applications:
-
-
-```
-svn co http://svn.codehaus.org/swiby/trunk/demo
-
+https://github.com/jeanlazarou/swiby.git
 ```
 
 You need to install [JRuby](http://jruby.org/download). Then you can run the demos.
